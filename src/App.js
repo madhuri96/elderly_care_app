@@ -32,6 +32,7 @@ function App() {
     const reminder = {
       medication: selectedMedication,
       dateTime: dateTime,
+      isTaken: false, // Add new property to track medication intake
     };
     if (editingReminder !== null) {
       // If editing reminder, update the existing reminder
@@ -80,6 +81,14 @@ function App() {
     setEditingReminder(index);
   };
 
+  const handleMedicationTaken = (index) => {
+    setReminders((prevReminders) => {
+      const updatedReminders = [...prevReminders];
+      updatedReminders[index].isTaken = true;
+      return updatedReminders;
+    });
+  };
+
   const showNotification = (medication) => {
     if ('Notification' in window && Notification.permission === 'granted') {
       new Notification(`Medication Reminder`, {
@@ -123,7 +132,7 @@ function App() {
                 fontStyle: 'italic',
               }}
             >
-              Click on a medicines to set a reminder
+              Click on a medicine to set a reminder
             </h6>
             <ul>
               {medications.map((medication, index) => (
@@ -163,11 +172,19 @@ function App() {
                     <span className='date-time'>
                       Date & Time: {reminder.dateTime}
                     </span>
+                    <span className='status'>
+                      Status: {reminder.isTaken ? 'Taken' : 'Not Taken'}
+                    </span>
                   </div>
                   <div className='reminder-actions'>
                     <button onClick={() => handleEditReminder(index)}>
                       Edit
                     </button>
+                    {!reminder.isTaken && (
+                      <button onClick={() => handleMedicationTaken(index)}>
+                        Mark as Taken
+                      </button>
+                    )}
                     <button onClick={() => handleDeleteReminder(index)}>
                       Delete
                     </button>
